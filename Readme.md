@@ -1,5 +1,13 @@
 # Trying to have TDC7200 and HCSR04 run togethers.
 
+## Hardware
+
+* tdc7200evm
+* hcsr04
+* breadboard and wires/jumpers
+* m5stack
+* 5V-3.3V bidirectional level shifter (eg HW-221 )
+
 ## Present
 
 * main: main arduino code
