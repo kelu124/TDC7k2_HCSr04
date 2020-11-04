@@ -17,6 +17,15 @@
 ## Ongoing issues
 
 Get good reading from the TDC7200 :p
+```
+	// calCount scaled by 2^shift
+	const int64_t calCount = ( int64_t(calibration2-calibration1) << shift ) / int64_t(m_cal2Periods - 1);
+	// normLsb scaled by 2^shift, divided by calcount (scaled by 2^shift),
+	// so multiply by 2^(2*shift) to compensate for divider in calCount
+	m_normLsb  = (uint64_t(m_clkPeriodPs) << (2*shift)) / calCount;
+```
+
+Getting a div/0 error with calCount ( `calibration2 == calibration1 == 0 ?`  )
 
 ## Arduino Setup
 
