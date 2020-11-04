@@ -20,12 +20,14 @@
 
 static TDC7200 tof(PIN_TDC7200_ENABLE, PIN_TDC7200_SPI_CS, TDC7200_CLOCK_FREQ_HZ);
 
+#define oePin 3 //
 #define echoPin 21 // attach Arduino to pin Echo of HC-SR04
 #define trigPin 22 //attach Arduino to pin Trig of HC-SR04
 
 #define MAX_DISTANCE 150 // Maximum distance we want to ping for (in centimeters). Maximum sensor distance is rated at 400-500cm.
 NewPing sonar(trigPin, echoPin, MAX_DISTANCE); // NewPing setup of pins and maximum distance.
 float duration, distance;
+int NbLines;
 
 /* Used in TOF calculation*/
 static void ui64toa(uint64_t v, char * buf, uint8_t base)
@@ -50,7 +52,7 @@ static void ui64toa(uint64_t v, char * buf, uint8_t base)
 
 
 void setup() {
-
+  NbLines = 0;
   Serial.begin(115200);
   M5.begin();
 
@@ -67,10 +69,12 @@ void setup() {
 
   pinMode(PIN_TDC7200_INT, INPUT_PULLUP);     // active low (open drain)
 
-
+  pinMode(oePin, OUTPUT);
+  digitalWrite(oePin, LOW);
   pinMode(trigPin, OUTPUT); // Sets the trigPin as an OUTPUT
-  pinMode(echoPin, INPUT); // Sets the echoPin as an INPUT
-
+  pinMode(trigPin, LOW); // Sets the trigPin as an OUTPUT
+  pinMode(echoPin, OUTPUT); // Sets the trigPin as an OUTPUT
+  pinMode(echoPin, LOW); // Sets the trigPin as an OUTPUT
   Serial.println(F("Ultrasonic Sensor HC-SR04 Test")); // print some text in Serial Monitor
   Serial.println(F("with m5stack"));
 
@@ -86,8 +90,8 @@ void setup() {
   } else {
     M5.Lcd.print("Setup OK");
     Serial.println(F("Setup OK"));
-      Serial.print(F("\tCalibA\t")); Serial.print(tof.readCalibA());
-  Serial.print(F("\tCalibB\t")); Serial.print(tof.readCalibB());
+    Serial.print(F("\tCalibA\t")); Serial.print(tof.readCalibA());
+    Serial.print(F("\tCalibB\t")); Serial.print(tof.readCalibB());
     delay(1000);
   }
 
@@ -97,22 +101,34 @@ void setup() {
   // Setup overflow to timeout if tof takes longer than timeout.
   //tof.setupOverflow(130000000ull);
 
+  digitalWrite(oePin, HIGH);
+
+  pinMode(echoPin, INPUT); // Sets the echoPin as an INPUT
   delay(1000);
 }
 
 
 
+void printCalib(String placeholder) {
+  Serial.println("\n-- "); Serial.print(NbLines); Serial.print(" ");
+  Serial.print("Testing: "); Serial.print(placeholder); Serial.print(" --\n");
+  Serial.print(F("-- CalibA\t")); Serial.print(tof.readCalibA());
+  Serial.print(F("\tCalibB\t")); Serial.print(tof.readCalibB());
+  Serial.println("\n-- --");
+}
 
 void loop() {
   // Clears the trigPin condition
   // Wait 100ms between pings (about 20 pings/sec). 29ms should be the shortest delay between pings.
-
+  NbLines++;
+  printCalib("Avant measurement");
   tof.startMeasurement();
+  printCalib("Apres measurement");
 
-
-  duration = sonar.ping();
-  distance = (duration / 2) * 0.0343;
-
+  duration = sonar.ping(); //  get the echo time (in microseconds) 
+  distance = sonar.convert_cm(duration);
+  Serial.print("duration: "); Serial.println(duration);
+  Serial.print("distance: "); Serial.println(distance);
   delay(50);
   M5.Lcd.fillScreen(RED);
   M5.Lcd.setCursor(100, 100);

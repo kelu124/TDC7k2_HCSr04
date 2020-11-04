@@ -14,6 +14,10 @@
 * backup of the libs
 * TDCtests= auto test (without HCSR04)
 
+## Libs
+
+Replace the cpp and h files from your TDC7200 folder [with those here](https://github.com/kelu124/TDC7k2_HCSr04/tree/master/TDC7200_changed)
+
 ## Ongoing issues
 
 Get good reading from the TDC7200 :p
@@ -25,7 +29,12 @@ Get good reading from the TDC7200 :p
 	m_normLsb  = (uint64_t(m_clkPeriodPs) << (2*shift)) / calCount;
 ```
 
-Getting a div/0 error with calCount ( `calibration2 == calibration1 == 0 ?`  )
+Getting a div/0 error with calCount ( `CalibA == CalibB == 0 ?`  ).
+
+* `TDC7200_Test_m5`: shows correct CalibA / CalibB
+* `main code`: shows O on both.
+
+Weird.
 
 ## Arduino Setup
 
@@ -33,7 +42,7 @@ Getting a div/0 error with calCount ( `calibration2 == calibration1 == 0 ?`  )
 
 ## Physical connections
 
-Just need to but a birectional level translator between HCSR04 (5V) and the rest of the world (3.3V).
+Just need to but a birectional level translator between HCSR04 (5V) and the rest of the world (3.3V). It is controlled through OE by Pin3 of M5STACK. Allows to switch between `TDC7200_Test_m5` and `main code` without changing the connections.
 
 ### Setup 
 
