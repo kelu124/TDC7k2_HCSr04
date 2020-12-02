@@ -1,15 +1,14 @@
 // Connections:
 
 
-#include "TDC7200.h"
-#include <M5Stack.h>
+#include "TDC7200.h" 
 
-#define PIN_TDC7200_INT       17
-#define PIN_TDC7200_ENABLE    2
-#define PIN_TDC7200_STOP      22
-#define PIN_TDC7200_START     21
+#define PIN_TDC7200_INT       A4
+#define PIN_TDC7200_ENABLE    A3
+#define PIN_TDC7200_STOP      A2
+#define PIN_TDC7200_START     A1
 
-#define PIN_TDC7200_SPI_CS    5
+#define PIN_TDC7200_SPI_CS    A5
 #define TDC7200_CLOCK_FREQ_HZ 8000000
 
 #define oePin 3 //
